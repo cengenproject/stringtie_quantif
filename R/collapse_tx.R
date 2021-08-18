@@ -41,7 +41,7 @@ get_equivalent <- function(tx1, tx2,
     exon_bp <- tryCatch(width(psetdiff(tx1,tx2)),
                         error= function(e) NA)
     if(length(exon_bp) == 1 && is.na(exon_bp)){
-      exon_bp <- width(setdiff(as(tx1, "GRangesList"),
+      exon_bp <- width(BiocGenerics::setdiff(as(tx1, "GRangesList"),
                                as(tx2, "GRangesList")))
     }
     
