@@ -14,12 +14,9 @@ gids <- wb_load_gene_ids(277)
 
 txdb <- wb_load_TxDb(277)
 
-txdf <- AnnotationDbi::select(txdb,
-               keys=keys(txdb, keytype = "GENEID"),
-               columns=c("GENEID","TXNAME", "TXID"),
-               keytype = "GENEID")
 
 
+# Functions ----
 get_equivalent <- function(tx1, tx2,
                            threshold_tot_prop = 0.05,
                            threshold_tot_bp = 20,
@@ -123,10 +120,17 @@ simplify_gene <- function(gene){
 
 
 
-# Do for each gene ----
+# Format data ----
+txdf <- AnnotationDbi::select(txdb,
+                              keys=keys(txdb, keytype = "GENEID"),
+                              columns=c("GENEID","TXNAME", "TXID"),
+                              keytype = "GENEID")
 
 genelist <- keys(txdb, "GENEID")
 all_exons <- exonsBy(txdb, by="tx")
+
+
+# Do for each gene ----
 
 cat("Starting run, may take 40 min\n\n")
 
@@ -140,7 +144,7 @@ new_exons_db <- parallel::mclapply(genelist, simplify_gene, mc.cores = 15)
 
 new_exons_db <- unlist(unlist(List(new_exons_db)))
 
-saveRDS(new_exons_db, "new_db_as_granges.rds")
+saveRDS(new_exons_db, "intermediates/210819_new_db_as_granges.rds")
 cat("Saved\n")
 
 
@@ -161,6 +165,10 @@ mcols(new_exons_db)$gene_symbol <- mcols(new_exons_db)$transcript_name |>
   wb_seq2name(gids, warn = TRUE)
 
 
+col_txdb <- makeTxDbFromGRanges(new_exons_db)
+
+
+
 #~ Checks ----
 # nb transcripts
 cat("Number of transcripts: ")
@@ -177,11 +185,6 @@ cat("\n vs initial number of genes: ",length(genelist),"\n")
 
 #~ Export ----
 
-
-col_txdb <- makeTxDbFromGRanges(new_exons_db)
-saveDb(col_txdb, "collapsed_WS277.txdb.sqlite")
-
-
-# Save GTF too
-rtracklayer::export(transcriptsBy(col_txdb), "collapsed_annotation_WS277.gff3")
+saveDb(col_txdb, "intermediates/210818_collapsed_WS277.txdb.sqlite")
+rtracklayer::export(transcriptsBy(col_txdb), "intermediates/210818_collapsed_annotation_WS277.gff3")
 
