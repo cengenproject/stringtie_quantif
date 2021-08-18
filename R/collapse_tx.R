@@ -131,13 +131,11 @@ all_exons <- exonsBy(txdb, by="tx")
 cat("Starting run, may take 40 min\n\n")
 
 
-# # To run on this computer
-new_exons_db <- lapply(genelist[1:3], simplify_gene)
+# # To run on laptop
+# new_exons_db <- lapply(genelist[1:3], simplify_gene)
 
-# To run on SLURM with 'rbatch' alias
-args <- commandArgs(trailingOnly = TRUE)
-slurm_cores <- as.numeric(args[1])
-new_exons_db <- parallel::mclapply(genelist, simplify_gene, mc.cores = slurm_cores)
+# To run on SLURM
+new_exons_db <- parallel::mclapply(genelist, simplify_gene, mc.cores = 10)
 
 
 new_exons_db <- unlist(unlist(List(new_exons_db)))
