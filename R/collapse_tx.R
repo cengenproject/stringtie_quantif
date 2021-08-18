@@ -9,9 +9,9 @@ library(GenomicFeatures)
 library(tidyverse)
 library(wbData)
 
+options(wb_dir_cache = "/gpfs/ycga/project/ysm/hammarlund/aw853/references/WS277/")
+
 gids <- wb_load_gene_ids(277)
-
-
 txdb <- wb_load_TxDb(277)
 
 
