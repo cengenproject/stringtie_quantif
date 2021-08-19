@@ -69,7 +69,8 @@ WSversion="WS277"
 
 ref_gtf="intermediates/210818_collapsed_annotation_WS${WSversion}.gff3"
 
-alig_dir="/SAY/standard/mh588-CC1100-MEDGEN/bulk_alignments/bsn5"
+# use the merged alignments in scratch60 (technical replicates are merged)
+alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
 
 #str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
 str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-08-18_stc_dcq5"
