@@ -93,9 +93,9 @@ then
 	exit 1
 fi
 
-mkdir $str2_out/neurons
-mkdir $str2_out/quantifications
-mkdir $str2_out/summaries
+mkdir -p $str2_out/neurons
+mkdir -p $str2_out/quantifications
+mkdir -p $str2_out/summaries
 
 
 echo "--------------------------------------------------------------"
@@ -246,7 +246,7 @@ do
 	echo "###################      Processing sample: $sample      ###################"
 	echo
 	
-	mkdir $str2_out/quantifications/$sample
+	mkdir -p $str2_out/quantifications/$sample
 	stringtie2 -eB \
 			-p $SLURM_CPUS_PER_TASK \
 			-G $str2_int/merged_full.gtf \
