@@ -126,7 +126,7 @@ done
 
 nb_samples=${#sampleList[@]}
 
-if [ $nb_samples -ne ${#sampleList_bsn3[*]} ]
+if [ $nb_samples -ne ${#sampleList[*]} ]
 then
 	echo "Error while making list of samples."
 	exit 1
