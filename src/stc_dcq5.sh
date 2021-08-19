@@ -7,6 +7,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=alexis.weinreb@yale.edu
 
+set -e
 
 # Principle: receive as argument a file with the sample names, and the name of the alignment pipeline
 # *
@@ -67,7 +68,7 @@ ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
 WSversion="WS277"
 
-ref_gtf="intermediates/210818_collapsed_annotation_WS${WSversion}.gff3"
+ref_gtf="intermediates/210818_collapsed_annotation_${WSversion}.gff3"
 
 # use the merged alignments in scratch60 (technical replicates are merged)
 alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
@@ -101,8 +102,8 @@ echo "--------------------------------------------------------------"
 ## Read sample list and remove trailing extension
 
 echo "Reading samples from bsn5"
-mapfile -t sampleList < <(ls $alig_dir | cut -f1 -d".")
-mapfile -t neuronList < <(ls $alig_dir | cut -f1 -d"r")
+mapfile -t sampleList < <(ls $alig_dir/*.bam | xargs basename -a -s .bam)
+mapfile -t neuronList < <(ls $alig_dir/*.bam | xargs basename -a -s .bam | cut -f1 -d"r")
 
 if [ ${#sampleList[@]} -lt 1 ]
 then
