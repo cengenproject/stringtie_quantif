@@ -24,7 +24,7 @@ wb_txdb <- wb_load_TxDb(277)
 wb_exons <- exonsBy(wb_txdb, by = "gene")
 
 
-sequ_txdb <- makeTxDbFromGFF("intermediates/210818_str2_outs/summaries/test_sequ_merged.gtf",
+sequ_txdb <- makeTxDbFromGFF("intermediates/210818_str2_outs/summaries/merged_corrected.gtf",
                              organism = "Caenorhabditis elegans",
                              dataSource = "WS277_collapsed_stringtie")
 sequ_exons <- exonsBy(sequ_txdb, by = "gene")
