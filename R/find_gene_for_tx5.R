@@ -6,10 +6,9 @@
 
 cat("Starting\n\n")
 
-
+library(tidyverse)
 library(AnnotationDbi)
 library(GenomicFeatures)
-library(tidyverse)
 library(parallel)
 
 library(wbData)
