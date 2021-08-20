@@ -98,7 +98,7 @@ transcripts_tbl <- AnnotationDbi::select(sequ_txdb,
                                          columns = c("TXNAME", "GENEID"),
                                          keytype = "TXNAME") %>%
   left_join(genes_tbl, by = c("GENEID" = "gene_sequ_name")) %>%
-  select(feature_id = TXNAME,
+  dplyr::select(feature_id = TXNAME,
          gene_id = gene_wb_name)
 
 
