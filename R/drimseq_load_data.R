@@ -86,5 +86,5 @@ for(i in 1:length(factors_in_design)){
 pdms <- dmPrecision(fdms, design = design_no_int)
 fitdms <- dmFit(pdms, design = design_no_int, verbose = 1)
 
-saveRDS(fitdms, "data/2021-08-20_fitdms")
+saveRDS(fitdms, "data/2021-08-20_fitdms.rds")
 
