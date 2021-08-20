@@ -259,7 +259,7 @@ echo "-----------     Making tables     ------------"
 echo
 echo " > command: ~/.utilities/prepDE.py -i $str2_out"
 cd $str2_out/summaries
-~/.utilities/prepDE.py -i $str2_out/quantifications
+~/.utilities/prepDE.py -i ../quantifications
 
 echo
 echo
