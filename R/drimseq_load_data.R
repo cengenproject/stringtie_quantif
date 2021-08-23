@@ -29,11 +29,6 @@ transcripts_tbl <- readRDS("data/transcript_WBGene_lut.rds")
 cnts <- readr::read_csv(file.path(path_data, "transcript_count_matrix.csv")) %>%
   as.data.frame()
 
-# rename genes and transcripts
-cnts$gene_id <- transcripts_tbl$gene_id[match(cnts$transcript_id, transcripts_tbl$feature_id)]
-cnts <- dplyr::rename(cnts, feature_id = transcript_id)
-
-
 # Prepare samples table
 old_samples_table <- readr::read_csv("data/210820_full_sample_list.csv", col_types = "ccc") %>%
   dplyr::select(-replicate) %>%
@@ -43,11 +38,19 @@ new_sample_table <- str_match(colnames(cnts), "^([A-Z0-9]{1,4}|Ref)r[0-9]{1,4}$"
   as_tibble() %>%
   dplyr::slice(-1) %>%
   dplyr::rename(sample_id = V1,
-         neuron = V2)
+                neuron = V2)
 
-all.equal(old_samples_table%>% arrange(sample_id), new_sample_table%>% arrange(sample_id))
+waldo::compare(old_samples_table%>% arrange(sample_id), new_sample_table%>% arrange(sample_id))
 
 samples_table <- as.data.frame(new_sample_table)
+
+
+# rename genes and transcripts
+cnts$gene_id <- transcripts_tbl$gene_id[match(cnts$transcript_id, transcripts_tbl$feature_id)]
+cnts <- dplyr::rename(cnts, feature_id = transcript_id)
+
+
+
 
 
 # Create DRIMSeq object
