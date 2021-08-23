@@ -45,6 +45,15 @@ waldo::compare(old_samples_table%>% arrange(sample_id), new_sample_table%>% arra
 samples_table <- as.data.frame(new_sample_table)
 
 
+
+xx <- IsoformSwitchAnalyzeR::importRdata(isoformCountMatrix = cnts%>%
+                                           rename(isoform_id = transcript_id),
+                                         designMatrix = samples_table %>%
+                                           rename(sampleID = sample_id, condition = neuron),
+                                         isoformExonAnnoation = "data/str2_summaries/merged_corrected.gtf",
+                                         fixStringTieAnnotationProblem = TRUE,
+                                         fixStringTieViaOverlapInMultiGenes = TRUE)
+
 # rename genes and transcripts
 cnts$gene_id <- transcripts_tbl$gene_id[match(cnts$transcript_id, transcripts_tbl$feature_id)]
 cnts <- dplyr::rename(cnts, feature_id = transcript_id)
