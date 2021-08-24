@@ -269,7 +269,7 @@ echo
 
 echo "----------  Preparing merged GTF  ------------"
 
-awk -f /.src/correct_gtf.gawk $str2_int/merged_full.gtf > $str2_out/summaries/merged_corrected.gtf
+awk -f src/correct_gtf.gawk $str2_int/merged_full.gtf > $str2_out/summaries/merged_corrected.gtf
 echo
 
 
