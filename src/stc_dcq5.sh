@@ -165,12 +165,16 @@ do
   echo
   
   # First run for each sample without eB, to create the GTFs and discover novel transcripts
+  
+  # -f  minimum isoform abundance (default 0.01)
+  # -j  min nb of jction-covering reads (def 1)
+  # -c  minimum read coverage allowed anywhere in transcript (def 1)
   stringtie2 -p $SLURM_CPUS_PER_TASK \
     -G $ref_gtf \
     -o $str2_int/$sample.gtf \
-    -f 0.05 \     # minimum isoform abundance (default 0.01)
-    -j 10 \       # min nb of jction-covering reads (def 1)
-    -c 1.5 \      # minimum read coverage allowed anywhere in transcript (def 1)
+    -f 0.05 \
+    -j 10 \
+    -c 1.5 \
     ${samplePath[i]}
 done
 
