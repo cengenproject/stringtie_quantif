@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=general
 #SBATCH --job-name=stringtie
-#SBATCH -c 10
-#SBATCH --mem=15G
+#SBATCH -c 18
+#SBATCH --mem=30G
 #SBATCH --time=5-00:10:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=alexis.weinreb@yale.edu
@@ -14,7 +14,7 @@ set -e
 # Pipeline: StringTie2 on results of bsn5 (alignment), using collapsed gtf, version 1, with novel isoform discovery and GTF combination
 # bsn5: bbduk, star, NuDup; then stc_dcq: stringtie on collapsed for novel, combine, quantify
 # Important: combine only same neuron
-pipeline_version="stc_dcq5"
+pipeline_version="stc_dcq6"
 
 
 ######## Usage ######
@@ -74,8 +74,8 @@ ref_gtf="intermediates/210818_collapsed_annotation_${WSversion}.gff3"
 alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
 
 #str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
-str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-08-18_stc_dcq5"
-str2_out="intermediates/210818_str2_outs"
+str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-08-24_stc_dcq6"
+str2_out="intermediates/210824_str2_outs"
 
 
 ## Check inputs
@@ -164,10 +164,13 @@ do
   echo "######################     Processing sample: $sample      ######################"
   echo
   
-  # First run for each sample without eB, just to create the GTFs
+  # First run for each sample without eB, to create the GTFs and discover novel transcripts
   stringtie2 -p $SLURM_CPUS_PER_TASK \
     -G $ref_gtf \
     -o $str2_int/$sample.gtf \
+    -f 0.05 \     # minimum isoform abundance (default 0.01)
+    -j 10 \       # min nb of jction-covering reads (def 1)
+    -c 1.5 \      # minimum read coverage allowed anywhere in transcript (def 1)
     ${samplePath[i]}
 done
 
@@ -266,7 +269,7 @@ echo
 
 echo "----------  Preparing merged GTF  ------------"
 
-awk -f ~/.utilities/correct_gtf.gawk $str2_int/merged_full.gtf > $str2_out/summaries/merged_corrected.gtf
+awk -f /.src/correct_gtf.gawk $str2_int/merged_full.gtf > $str2_out/summaries/merged_corrected.gtf
 echo
 
 
