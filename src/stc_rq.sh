@@ -58,7 +58,7 @@ ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
 WSversion="WS277"
 
-ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758.WS277.canonical_geneset.gtf.gz"
+ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758.WS277.canonical_geneset.gtf"
 
 # use the merged alignments in scratch60 (technical replicates are merged)
 alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
