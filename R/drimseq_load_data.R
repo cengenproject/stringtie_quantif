@@ -1,5 +1,6 @@
 # DRIMSeq preprocessing
 # Version "stc_dcq3_v4": using "stc_dcq3" data, 4th version of the scripts
+# Updated to use stc_dcq6 (more conservative transcript discovery)
 
 # First need to run STAR alignment + collapsedGTF + StringTie2 (bss1cst1_1 pipeline)
 # then need to run find_gene_for_tx4.R
@@ -7,42 +8,44 @@
 
 ## Initializations ----
 
-library(AnnotationDbi)
-library(GenomicFeatures)
-library(tidyverse)
-library(DRIMSeq)
+suppressPackageStartupMessages({
+  library(AnnotationDbi)
+  library(GenomicFeatures)
+  library(tidyverse)
+  library(DRIMSeq)
+})
 
 
 ## Prepare Data ----
-# From StringTie2 (stc_dcq5)
-path_data <- "data/str2_summaries"
 
+# From StringTie2 (stc_dcq5)
+path_data <- "data/intermediates/210824_str2_outs/summaries/"
 
 # get tx <-> gene table from "find_gene_for_tx5.R": need to run separately
-transcripts_tbl <- readRDS("data/transcript_WBGene_lut.rds")
-
-
-
-
-# Data from STAR alignment + collapsedGTF + StringTie2 (bss1cst1_1 pipeline)
-# Read sample counts
-cnts <- readr::read_csv(file.path(path_data, "transcript_count_matrix.csv")) %>%
-  as.data.frame()
+transcripts_tbl <- readRDS("data/210824_transcript_WBGene_lut.rds")
 
 # Prepare samples table
-old_samples_table <- readr::read_csv("data/210820_full_sample_list.csv", col_types = "ccc") %>%
+samples_table <- readr::read_csv("data/210820_full_sample_list.csv", col_types = "ccc") %>%
   dplyr::select(-replicate) %>%
   dplyr::rename(sample_id = sample)
 
-new_sample_table <- str_match(colnames(cnts), "^([A-Z0-9]{1,4}|Ref)r[0-9]{1,4}$") %>%
-  as_tibble() %>%
+
+# Data from STAR alignment + collapsedGTF + StringTie2 (bsn5cst1_1 pipeline)
+# Read sample counts
+cnts <- readr::read_csv(file.path(path_data, "transcript_count_matrix.csv"),
+                        col_types = paste0(c("c", rep("d", nrow(samples_table))),
+                                           collapse=""))
+
+
+# Check samples
+str_match(colnames(cnts), "^([A-Z0-9]{1,4}|Ref)r[0-9]{1,4}$") %>%
+  as_tibble(.name_repair = "universal") %>%
   dplyr::slice(-1) %>%
-  dplyr::rename(sample_id = V1,
-                neuron = V2)
-
-waldo::compare(old_samples_table%>% arrange(sample_id), new_sample_table%>% arrange(sample_id))
-
-samples_table <- as.data.frame(new_sample_table)
+  dplyr::rename(sample_id = ...1,
+                neuron = ...2) %>%
+  arrange(sample_id) %>%
+  identical(samples_table) %>%
+  stopifnot()
 
 
 
@@ -56,7 +59,8 @@ cnts <- dplyr::rename(cnts, feature_id = transcript_id)
 
 
 # Create DRIMSeq object
-dms <- dmDSdata(cnts, samples_table)
+dms <- dmDSdata(as.data.frame(cnts),
+                as.data.frame(samples_table))
 
 # Filter out lowly expressed:
 # 1/ we keep only transcripts with at least `min_feature_expr`
@@ -91,5 +95,5 @@ for(i in 1:length(factors_in_design)){
 pdms <- dmPrecision(fdms, design = design_no_int)
 fitdms <- dmFit(pdms, design = design_no_int, verbose = 1)
 
-saveRDS(fitdms, "data/2021-08-20_fitdms.rds")
+saveRDS(fitdms, "data/2021-08-24_fitdms.rds")
 
