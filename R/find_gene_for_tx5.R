@@ -23,14 +23,20 @@ wb_txdb <- wb_load_TxDb(277)
 wb_exons <- exonsBy(wb_txdb, by = "gene")
 
 
-sequ_txdb <- makeTxDbFromGFF("intermediates/210818_str2_outs/summaries/merged_corrected.gtf",
+# sequ_txdb <- makeTxDbFromGFF("data/str2_summaries/merged_corrected.gtf",
+#                              organism = "Caenorhabditis elegans",
+#                              dataSource = "WS277_collapsed_stringtie")
+
+sequ_txdb <- makeTxDbFromGFF("intermediates/210824_str2_outs/summaries/merged_corrected.gtf",
                              organism = "Caenorhabditis elegans",
                              dataSource = "WS277_collapsed_stringtie")
 sequ_exons <- exonsBy(sequ_txdb, by = "gene")
 
 
 # Find genes with intersection
-# based on nb of exons and/or on length of intersection
+# based on nb of exons and/or on length of intersection:
+# genes considered equivalent if 1/3rd of their exons are identical, or if
+# 1/3rd of their base pairs are in common.
 equivalent_genes <- function(sequ_gr, ref_gr, thres_prop_exons = 1/3, thres_length = 1/3){
   n_ex_equal <- length(which(!is.na(findOverlaps(sequ_gr,
                                                  ref_gr,
@@ -46,7 +52,6 @@ equivalent_genes <- function(sequ_gr, ref_gr, thres_prop_exons = 1/3, thres_leng
 # Notice: this function uses objects in the Global Environment
 match_gene_name <- function(s_g){
   ol_genes <- findOverlaps(sequ_exons[s_g], wb_exons, type="any")
-  length(ol_genes)
 
   if(length(ol_genes) == 1){
     if(equivalent_genes(sequ_exons[[s_g]], wb_exons[[to(ol_genes)]])){
@@ -87,8 +92,9 @@ match_gene_name <- function(s_g){
 # names(wb_exons[to(findOverlaps(sequ_exons[s_g], wb_exons))])
 
 cat("\n\nRunning!\n")
+tic <- proc.time()["elapsed"]
 tx_genes_wb_names <- as.character(mclapply(seq_along(sequ_exons), match_gene_name, mc.cores=15))
-cat("\nDone\n")
+cat("\nDone, toc: ", proc.time()["elapsed"] - tic,"\n")
 
 # Find names for all genes
 genes_tbl <- tibble(gene_sequ_name = names(sequ_exons),
@@ -136,4 +142,4 @@ transcripts_tbl$feature_id <- str_replace(transcripts_tbl$feature_id, pattern = 
 
 cat("Saving...")
 
-saveRDS(transcripts_tbl, "intermediates/transcript_WBGene_lut.rds")
+saveRDS(transcripts_tbl, "intermediates/210824_transcript_WBGene_lut.rds")
