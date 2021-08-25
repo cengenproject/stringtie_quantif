@@ -265,8 +265,10 @@ echo
 echo "-----------     Making tables     ------------"
 echo
 echo " > command: ~/.utilities/prepDE.py -i $str2_out"
+cur_dir=$(pwd)
 cd $str2_out/summaries
 ~/.utilities/prepDE.py -i ../quantifications
+cd $cur_dir
 
 echo
 echo
