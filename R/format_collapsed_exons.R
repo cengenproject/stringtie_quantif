@@ -11,6 +11,7 @@ txdb <- wb_load_TxDb(277)
 # On the result of collapse_tx.R, load the GRanges and make a GFF and TxDb out of it.
 
 new_exons_db <- readRDS("intermediates/210819_new_db_as_granges.rds")
+# new_exons_db <- readRDS("data/intermediates_collapse/210819_new_db_as_granges.rds")
 
 
 #~ Build metadata columns ----
@@ -73,4 +74,5 @@ mcols(new_exons_db)$gene_id %>%
 #~ Export ----
 
 saveDb(col_txdb, "intermediates/210818_collapsed_WS277.txdb.sqlite")
-rtracklayer::export(transcriptsBy(col_txdb), "intermediates/210818_collapsed_annotation_WS277.gff3")
+rtracklayer::export(col_txdb, "intermediates/210909_collapsed_annotation_WS277.gff3")
+
