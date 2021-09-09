@@ -58,12 +58,12 @@ ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
 WSversion="WS277"
 
-ref_gtf="intermediates/210818_collapsed_annotation_${WSversion}.gff3"
+ref_gtf="intermediates/210909_collapsed_annotation_${WSversion}.gff3"
 
 # use the merged alignments in scratch60 (technical replicates are merged)
 alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
 
-str2_out="intermediates/210901_str2_outs_collapsed_no_novel"
+str2_out="intermediates/210909_str2_outs_collapsed_no_novel"
 
 
 ## Check inputs
