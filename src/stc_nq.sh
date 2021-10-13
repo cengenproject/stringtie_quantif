@@ -32,7 +32,7 @@ pipeline_version="stc_nq"
 # then merges for each neuron type and saves both mergelist (list of samples from that neuron) and merged gtf in output directory
 # then merges all the neuron-wise gtf into a full gtf (stored in intermediary with list of neuron-wise gtf to merge)
 # then performs samples-wise quantification using merged_full.gtf and saves results in output directory
-# then calls prepDE.py and correct_gtf.gawk to generate the summary files (in output)
+# then calls prepDE.py to generate the summary files (in output)
 #
 # 
 # To re-run with a few more samples, do sample-wise discovery for these new samples, merge with existing neuron-wise gtf
@@ -234,7 +234,7 @@ echo "Make master merge"
 # -f min fraction of isoform (def 0.01)
 stringtie2 --merge \
   -G $ref_gtf \
-  -o $str2_int/merged_full.gtf \
+  -o $str2_out/merged_full.gtf \
   -p $SLURM_CPUS_PER_TASK \
   -m 50 \
   -c 1 \
@@ -261,7 +261,7 @@ do
   mkdir -p $str2_out/quantifications/$sample
   stringtie2 -eB \
     -p $SLURM_CPUS_PER_TASK \
-    -G $str2_int/merged_full.gtf \
+    -G $str2_out/merged_full.gtf \
     -o $str2_out/quantifications/$sample/$sample.gtf \
     ${samplePath[i]}
 done
@@ -276,13 +276,6 @@ cd $str2_out/summaries
 ~/.utilities/prepDE.py -i ../quantifications
 cd $cur_dir
 
-echo
-echo
-
-echo "----------  Preparing merged GTF  ------------"
-
-awk -f src/correct_gtf.gawk $str2_int/merged_full.gtf > $str2_out/summaries/merged_corrected.gtf
-echo
 
 
 echo
