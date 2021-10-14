@@ -221,6 +221,7 @@ do
     -c 1 \
     -T 2 \
     -f 0.10 \
+    -l STGene \
     $str2_out/neurons/mergelist_$neur.txt
 done
 
@@ -240,6 +241,7 @@ stringtie2 --merge \
   -c 1 \
   -T 2 \
   -f 0.01 \
+  -l STGene \
   $str2_out/quantifications/mergelist_full.txt
 
 
