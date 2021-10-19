@@ -75,7 +75,7 @@ alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
 
 #str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
 str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-10-19_stc_nq"
-str2_out="intermediates/211019_str2_stc_nq"
+str2_out="intermediates/211019_str2_stc_nq_big_gap"
 
 
 ## Check inputs
