@@ -13,8 +13,8 @@
 module load SAMtools
 
 
-alig_dir_orig="/SAY/standard/mh588-CC1100-MEDGEN/bulk_alignments/bsn5"
-alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
+alig_dir_orig="/SAY/standard/mh588-CC1100-MEDGEN/bulk_alignments/bsn9"
+alig_dir="/home/aw853/scratch60/2021-11-08_alignments"
 
 mkdir -p $alig_dir
 
