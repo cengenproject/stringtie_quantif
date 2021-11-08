@@ -74,8 +74,8 @@ ref_gtf="intermediates/210909_collapsed_annotation_${WSversion}.gff3"
 alig_dir="/home/aw853/scratch60/2021-08-18_alignments"
 
 #str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
-str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-10-19_stc_nq"
-str2_out="intermediates/211019_str2_stc_nq_big_gap"
+str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-10-20_stc_nq"
+str2_out="intermediates/211020_str2_stc_nq_small_gap"
 
 
 ## Check inputs
@@ -175,7 +175,7 @@ do
     -f 0.05 \
     -j 10 \
     -c 1.5 \
-    -g 100 \
+    -g 10 \
     ${samplePath[i]}
 done
 
@@ -222,7 +222,7 @@ do
     -c 1 \
     -T 2 \
     -f 0.10 \
-    -g 400 \
+    -g 50 \
     $str2_out/neurons/mergelist_$neur.txt
 done
 
@@ -242,7 +242,7 @@ stringtie2 --merge \
   -c 1 \
   -T 2 \
   -f 0.01 \
-  -g 400 \
+  -g 50 \
   $str2_out/quantifications/mergelist_full.txt
 
 
