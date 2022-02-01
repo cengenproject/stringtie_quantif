@@ -164,6 +164,10 @@ echo
 
 echo "-----------     Making tables     ------------"
 echo
+
+Rscript R/summarize_stringite_output.R $str2_out/quantifications $str2_out/summaries
+
+echo
 echo " > command: ~/.utilities/prepDE.py -i $str2_out"
 cd $str2_out/summaries
 ~/.utilities/prepDE.py -i ../quantifications
