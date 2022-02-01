@@ -140,6 +140,9 @@ write_tsv(samples_table,
           file.path(expdir, "samples_table.tsv"))
 
 
+write_tsv(vals_long,
+          file.path(expdir, "tx_long.tsv"))
+
 
 write_tsv(mat_cov,
           file.path(expdir, "tx_cov.tsv"))
