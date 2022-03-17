@@ -57,12 +57,13 @@ ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
 WSversion="WS281"
 
-ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
+#ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
+ref_gtf="intermediates/2022-02-24_str_sc_n/220317_novel.sorted.gtf"
 
 # use the merged alignments in scratch60 (technical replicates are merged)
 alig_dir="/home/aw853/scratch60/2021-11-08_alignments"
 
-str2_out="intermediates/220128_str_q_outs"
+str2_out="intermediates/220317_str_q_outs"
 
 
 ## Check inputs

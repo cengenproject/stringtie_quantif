@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --partition=general
 #SBATCH --job-name=stringtie_novel
-#SBATCH -c 18
+#SBATCH -c 15
 #SBATCH --mem=60G
-#SBATCH --time=5-00:10:00
+#SBATCH --time=3-00:10:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=alexis.weinreb@yale.edu
 
@@ -53,9 +53,9 @@ lr_alig_sam="/SAY/standard/mh588-CC1100-MEDGEN/pacbio/2021-11-05/pb_squanti3/ded
 
 # --- outputs
 str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
-# str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2021-10-20_str_sc_n"
+ str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2022-02-24_str_sc_n"
 
-$lr_sorted_bam=$str2_int/"2021-11-05_dedup.fasta.sorted.bam"
+lr_sorted_bam=$str2_int/"2021-11-05_dedup.fasta.sorted.bam"
 
 str2_out="intermediates/2022-02-24_str_sc_n"
 
@@ -125,7 +125,7 @@ fi
 
 
 
-echo " Will treat ${#sampleList[@]]} samples."
+echo " Will treat ${#sampleList[@]} samples."
 
 
 
@@ -136,16 +136,24 @@ module load SAMtools
 
 echo "--------------------------  Merging short-reads samples   --------------------------"
 
-samtools merge -@ $SLURM_CPUS_PER_TASK \
-      $str2_int/merged_short_reads.bam \
-      $(echo $sr_alig_dir/*.bam)
+#samtools merge -@ $SLURM_CPUS_PER_TASK \
+#      $str2_int/merged_short_reads.bam \
+#      $(echo $sr_alig_dir/*.bam)
+
+samtools view --bam \
+  --subsample 0.1 \
+  --subsample-seed 0 \
+  -@ $SLURM_CPUS_PER_TASK \
+  -o $str2_int/subsampled_merged_short_reads.bam \
+  $str2_int/merged_short_reads.bam
+
 
 
 echo "----------------------------  Sorting long-reads file   ----------------------------"
 
-samtools sort -@ $SLURM_CPUS_PER_TASK \
-        $lr_alig_sam \
-        $lr_sorted_bam
+#samtools sort -@ $SLURM_CPUS_PER_TASK \
+#        -o $lr_sorted_bam \
+#        $lr_alig_sam
 
 echo "------------------------------  StringTie2 discovery   -----------------------------"
 echo
@@ -154,7 +162,7 @@ echo
 stringtie2 -p $SLURM_CPUS_PER_TASK \
             -G $ref_gtf \
             -o $str2_out/merged.gtf \
-            --mix $str2_int/merged_short_reads.bam $lr_sorted_bam
+            --mix $str2_int/subsampled_merged_short_reads.bam $lr_sorted_bam
 
 
 
