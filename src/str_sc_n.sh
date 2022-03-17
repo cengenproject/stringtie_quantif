@@ -136,9 +136,10 @@ module load SAMtools
 
 echo "--------------------------  Merging short-reads samples   --------------------------"
 
-#samtools merge -@ $SLURM_CPUS_PER_TASK \
-#      $str2_int/merged_short_reads.bam \
-#      $(echo $sr_alig_dir/*.bam)
+samtools merge -@ $SLURM_CPUS_PER_TASK \
+      -o $str2_int/merged_short_reads.bam \
+      $(echo $sr_alig_dir/*.bam)
+>>>>>>> 41080b0f344eef6ed4c4f24540babc3689ccad34
 
 samtools view --bam \
   --subsample 0.1 \
@@ -146,6 +147,7 @@ samtools view --bam \
   -@ $SLURM_CPUS_PER_TASK \
   -o $str2_int/subsampled_merged_short_reads.bam \
   $str2_int/merged_short_reads.bam
+  
 
 
 
