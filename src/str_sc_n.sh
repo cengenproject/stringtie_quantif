@@ -125,7 +125,7 @@ fi
 
 
 
-echo " Will treat ${#sampleList[@]]} samples."
+echo " Will treat ${#sampleList[@]} samples."
 
 
 
@@ -137,8 +137,17 @@ module load SAMtools
 echo "--------------------------  Merging short-reads samples   --------------------------"
 
 samtools merge -@ $SLURM_CPUS_PER_TASK \
-      $str2_int/merged_short_reads.bam \
+      -o $str2_int/merged_short_reads.bam \
       $(echo $sr_alig_dir/*.bam)
+
+samtools view --bam \
+  --subsample 0.1 \
+  --subsample-seed 0 \
+  -@ $SLURM_CPUS_PER_TASK \
+  -o $str2_int/subsampled_merged_short_reads.bam \
+  $str2_int/merged_short_reads.bam
+  
+
 
 
 echo "----------------------------  Sorting long-reads file   ----------------------------"
@@ -154,7 +163,7 @@ echo
 stringtie2 -p $SLURM_CPUS_PER_TASK \
             -G $ref_gtf \
             -o $str2_out/merged.gtf \
-            --mix $str2_int/merged_short_reads.bam $lr_sorted_bam
+            --mix $str2_int/subsampled_merged_short_reads.bam $lr_sorted_bam
 
 
 
