@@ -166,6 +166,8 @@ echo
 echo "-----------     Making tables     ------------"
 echo
 
+module load R
+
 Rscript R/summarize_stringite_output.R $str2_out/quantifications $str2_out/summaries
 
 echo
