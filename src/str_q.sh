@@ -166,7 +166,9 @@ echo
 echo "-----------     Making tables     ------------"
 echo
 
-Rscript R/summarize_stringite_output.R $str2_out/quantifications $str2_out/summaries
+module load R
+
+Rscript R/summarize_stringtie_q_output.R $str2_out/quantifications $str2_out/summaries
 
 echo
 echo " > command: ~/.utilities/prepDE.py -i $str2_out"
