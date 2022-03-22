@@ -12,7 +12,7 @@
 suppressPackageStartupMessages(library(GenomicFeatures))
 library(wbData)
 
-gr_mgd <- rtracklayer::import("data/2022-03-14_str_sc_n_merged.gtf")
+gr_mgd <- rtracklayer::import("data/220322_merged.gtf")
 
 gr_novel <- gr_mgd[strand(gr_mgd) != "*" &
                      is.na(gr_mgd$reference_id), ]
@@ -147,14 +147,14 @@ exonsdf <- gr_novel[gr_novel$type == "exon" &
 
 
 dplyr::bind_rows(txdf, exonsdf) |>
-  readr::write_tsv("data/220317_novel.gtf",
+  readr::write_tsv("data/220322_novel_filt.gtf",
                    col_names = FALSE,
                    escape = "none")
 
 
 # check result
 
-shell("cat data/220317_novel.gtf | cut -f3 | sort | uniq -c")
+shell("cat data/220322_novel_filt.gtf | cut -f3 | sort | uniq -c")
 
 length(unlist(novel_exons[tx_alt_existing_gene]))
 length(tx_alt_existing_gene)
@@ -162,8 +162,8 @@ length(tx_alt_existing_gene)
 
 # merge back the reference transcripts
 shell(paste0("cat ", wb_get_gtf_path(281) |>
-               stringr::str_remove(".gz")," >> data/220317_novel.gtf"))
+               stringr::str_remove(".gz")," >> data/220322_novel_filt.gtf"))
 
-shell("sort -k1,1 -k4,4n data/220317_novel.gtf > data/220317_novel.sorted.gtf")
+shell("sort -k1,1 -k4,4n data/220322_novel_filt.gtf > data/220322_novel_filt_sorted.gtf")
 
 
