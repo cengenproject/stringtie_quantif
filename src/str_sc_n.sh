@@ -47,18 +47,17 @@ ref_gtf=$ref_dir/$WSversion/c_elegans.PRJNA13758.$WSversion.canonical_geneset.gt
 
 
 # --- aligned reads
-sr_alig_dir="/home/aw853/scratch60/2021-11-08_alignments"
+sr_alig_dir="/home/aw853/scratch60/2022-03-18_alignments"
 lr_alig_sam="/SAY/standard/mh588-CC1100-MEDGEN/pacbio/2021-11-05/pb_squanti3/dedup.fasta.sam"
 
 
 # --- outputs
 str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
- str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2022-02-24_str_sc_n"
+# str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2022-02-24_str_sc_n"
 
-lr_sorted_bam=$str2_int/"2021-11-05_dedup.fasta.sorted.bam"
 
-str2_out="intermediates/2022-02-24_str_sc_n"
-
+str2_out="intermediates/2022-03-22_str_sc_n"
+out_gtf="220322_merged.gtf"
 
 
 ## Check inputs
@@ -152,9 +151,9 @@ samtools view --bam \
 
 echo "----------------------------  Sorting long-reads file   ----------------------------"
 
-#samtools sort -@ $SLURM_CPUS_PER_TASK \
-#        -o $lr_sorted_bam \
-#        $lr_alig_sam
+samtools sort -@ $SLURM_CPUS_PER_TASK \
+        -o $str2_int/lr_sorted.bam \
+        $lr_alig_sam
 
 echo "------------------------------  StringTie2 discovery   -----------------------------"
 echo
@@ -162,8 +161,8 @@ echo
 
 stringtie2 -p $SLURM_CPUS_PER_TASK \
             -G $ref_gtf \
-            -o $str2_out/merged.gtf \
-            --mix $str2_int/subsampled_merged_short_reads.bam $lr_sorted_bam
+            -o $str2_out/$out_gtf \
+            --mix $str2_int/subsampled_merged_short_reads.bam $str2_int/lr_sorted.bam
 
 
 
