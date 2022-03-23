@@ -58,12 +58,12 @@ ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 WSversion="WS281"
 
 #ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
-ref_gtf="intermediates/2022-02-24_str_sc_n/220317_novel.sorted.gtf"
+ref_gtf="intermediates/2022-03-22_str_sc_n/220322_novel_filt_sorted.gtf"
 
 # use the merged alignments in scratch60 (technical replicates are merged)
-alig_dir="/home/aw853/scratch60/2021-11-08_alignments"
+alig_dir="/home/aw853/scratch60/2022-03-18_alignments"
 
-str2_out="intermediates/220317_str_q_outs"
+str2_out="intermediates/220322_str_q_outs"
 
 
 ## Check inputs
@@ -77,11 +77,10 @@ fi
 
 if [ ! -d $str2_out ]
 then
-echo "Error: destination directory does not exist. If this is a new pipeline version, you need to create it yourself: $str2_out"
-exit 1
+echo "Warning: destination directory does not exist. Creating it: $str2_out"
+mkdir -p $str2_out
 fi
 
-mkdir -p $str2_out/neurons
 mkdir -p $str2_out/quantifications
 mkdir -p $str2_out/summaries
 
