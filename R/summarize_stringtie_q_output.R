@@ -154,4 +154,21 @@ write_tsv(mat_tpm,
           file.path(expdir, "tx_TPM.tsv"))
 
 
+# for export to Shiny app
+tx_tab <- transcripts_table |> select(transcript_id, gene_id)
+t_export <- vals_long |>
+  full_join(tx_tab, by = "transcript_id") |>
+  full_join(samples_table, by = "sample_id") |>
+  select(transcript_id, gene_id, sample_id, neuron_id, TPM)
+
+if(nrow(t_export) != nrow(vals_long)){
+  warning("Number of rows don't match.")
+}
+
+write_tsv(t_export,
+          file.path(expdir, "t_exp.tsv"))
+
+cat("Export with: scp", file.path(expdir, "t_exp.tsv"),
+    "cengen-cps:/srv/shiny-server/isoform_compare/data \n")
+
 
