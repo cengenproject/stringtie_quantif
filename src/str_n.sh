@@ -56,7 +56,7 @@ sr_alig_dir="/home/aw853/scratch60/2021-11-08_alignments"
 
 # --- outputs
 str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/"$(date +"%Y-%m-%d")"_"$pipeline_version
-str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2022-02-24_str_sc_n"
+str2_int="/gpfs/ycga/scratch60/ysm/hammarlund/aw853/2022-03-22_str_sc_n"
 
 # lr_sorted_bam=$str2_int/"2021-11-05_dedup.fasta.sorted.bam"
 
