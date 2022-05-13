@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=general
-#SBATCH --job-name=stringtie_novel
+#SBATCH --job-name=stringtie_novel_nomix
 #SBATCH -c 10
 #SBATCH --mem=50G
 #SBATCH --time=3-00:10:00
@@ -101,9 +101,9 @@ echo
 
 
 stringtie2 -p $SLURM_CPUS_PER_TASK \
--G $ref_gtf \
--o $str2_out/220513_merged.gtf \
---mix $str2_int/subsampled_merged_short_reads.bam 
+  -G $ref_gtf \
+  -o $str2_out/220513_merged_nomix.gtf \
+  $str2_int/subsampled_merged_short_reads.bam 
 
 
 
