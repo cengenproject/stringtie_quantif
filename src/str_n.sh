@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=general
 #SBATCH --job-name=stringtie_novel
-#SBATCH -c 15
-#SBATCH --mem=60G
+#SBATCH -c 10
+#SBATCH --mem=50G
 #SBATCH --time=3-00:10:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=alexis.weinreb@yale.edu
@@ -80,43 +80,8 @@ mkdir -p $str2_out/summaries
 echo "--------------------------------------------------------------"
 ## Read sample list and remove trailing extension
 
-echo "Reading samples from bsn9"
-mapfile -t sampleList < <(ls $sr_alig_dir/*.bam | xargs basename -a -s .bam)
 
 
-if [ ${#sampleList[@]} -lt 1 ]
-  then
-  echo "Error: failed to find samples."
-  exit 1
-fi
-
-
-
-
-# make lists of paths
-for((i=0; i<${#sampleList[@]}; i++))
-do
-  samplePath[i]=$sr_alig_dir/${sampleList[i]}".bam"
-done
-
-
-nb_samples=${#sampleList[@]}
-
-if [ $nb_samples -ne ${#sampleList[*]} ]
-then
-  echo "Error while making list of samples."
-  exit 1
-fi
-
-if [ ${#samplePath[@]} -ne $nb_samples ]
-then
-  echo "Error while building paths."
-  exit 1
-fi
-
-
-
-echo " Will treat ${#sampleList[@]} samples."
 
 
 
