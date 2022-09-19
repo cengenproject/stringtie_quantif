@@ -81,21 +81,47 @@ cat("Processing.\n")
 
 # get main tx per sample
 #(note, nesting for performance, just grouping recomputes main_tx)
-tx_sample <- tx_long |>
+cat(".... nesting...")
+tx_nested <- tx_long |>
   mutate(transcript_id = as.character(transcript_id)) |>
   group_by(neuron_id, sample_id, gene_id) |>
-  nest() |>
+  nest()
+cat(" -- saving!\n")
+rm(tx_long)
+qs::qsave(tx_nested,
+          paste0(interm_dir,"tx_nested.qs"))
+
+
+cat(".... main tx...")
+tx_main <- tx_nested |>
   mutate(main_tx = map_chr(data,
-                           ~ .x[["transcript_id"]][which.max(.x[["TPM"]])]),
-         tx_mean_TPM = map_dbl(data,
-                               ~ mean(.x[["TPM"]][.x[["transcript_id"]] == main_tx]))) |>
+                           ~ .x[["transcript_id"]][which.max(.x[["TPM"]])]))
+cat(" -- saving!\n")
+rm(tx_nested)
+qs::qsave(tx_main,
+          paste0(interm_dir,"tx_main.qs"))
+
+
+cat(".... mean TPM...")
+tx_tpm <- tx_main |>
+  mutate(tx_mean_TPM = map_dbl(data,
+                               ~ mean(.x[["TPM"]][.x[["transcript_id"]] == main_tx])))
+cat(" -- saving!\n")
+rm(tx_main)
+qs::qsave(tx_tpm,
+          paste0(interm_dir,"tx_tpm.qs"))
+
+cat(".... final factorization...")
+tx_sample <- tx_tpm |>
   select(-data) |>
   mutate(main_tx = factor(main_tx))
-
+cat(" -- saving!\n")
+rm(tx_tpm)
 qs::qsave(tx_sample,
           paste0(interm_dir,"tx_sample.qs"))
 
 # collect votes per neuron type
+cat("collecting votes per neuron type.\n")
 collected_per_neur <- tx_sample |>
   group_by(gene_id, neuron_id, main_tx) |>
   summarize(nb_votes = n(),
@@ -105,6 +131,7 @@ qs::qsave(collected_per_neur,
           paste0(interm_dir, "collected_per_neur.qs"))
 
 # select single tx per neuron
+cat("Selecting single tx per neuron.\n")
 tx_neuron <- collected_per_neur |>
   group_by(gene_id, neuron_id) |>
   summarize(main_tx = main_tx[majority_vote(nb_votes,
