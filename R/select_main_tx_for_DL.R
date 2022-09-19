@@ -29,6 +29,9 @@ gids <- wb_load_gene_ids(281)
 interm_dir <- "intermediates/intermediates_for_DL/220919/"
 input_data <- "intermediates/220322_str_q_outs/summaries/t_exp.tsv"
 
+# for testing on local PC
+# input_data <- "data/220128_str_q_summaries/t_exp.tsv"
+
 
 #~ functions ----
 
@@ -64,7 +67,7 @@ stop_for_problems(tx_long)
 
 #~ Select main transcript-neuron ----
 
-# test data
+# for testing on small dataset
 # subsample_gene <- s2i(c("nlp-40", "C25H3.11"), gids)
 # subsample_neur <- c("AIM", "ADL", "AVM")
 # 
