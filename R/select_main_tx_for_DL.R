@@ -26,7 +26,7 @@ gids <- wb_load_gene_ids(281)
 
 
 # I/O storage
-interm_dir <- "intermediates/intermediates_for_DL/220919"
+interm_dir <- "intermediates/intermediates_for_DL/220919/"
 input_data <- "intermediates/220322_str_q_outs/summaries/t_exp.tsv"
 
 
@@ -41,7 +41,7 @@ majority_vote <- function(x, tie_breaker){
   } else{
     final_vote <- which(x == max(x) &
                           tie_breaker == max(tie_breaker[majority_vote]))
-    if(length(final_vote != 1L)) stop("Failed to take majority vote.")
+    if(length(final_vote) != 1L) stop("Failed to take majority vote.")
     return(final_vote)
   }
 }
@@ -81,42 +81,16 @@ cat("Processing.\n")
 
 # get main tx per sample
 #(note, nesting for performance, just grouping recomputes main_tx)
-cat(".... nesting...")
-tx_nested <- tx_long |>
+tx_sample <- tx_long |>
   mutate(transcript_id = as.character(transcript_id)) |>
   group_by(neuron_id, sample_id, gene_id) |>
-  nest()
-cat(" -- saving!\n")
-rm(tx_long)
-qs::qsave(tx_nested,
-          paste0(interm_dir,"tx_nested.qs"))
-
-
-cat(".... main tx...")
-tx_main <- tx_nested |>
+  nest() |>
   mutate(main_tx = map_chr(data,
-                           ~ .x[["transcript_id"]][which.max(.x[["TPM"]])]))
-cat(" -- saving!\n")
-rm(tx_nested)
-qs::qsave(tx_main,
-          paste0(interm_dir,"tx_main.qs"))
+                           ~ .x[["transcript_id"]][which.max(.x[["TPM"]])]),
+  tx_mean_TPM = map_dbl(data,
+                               ~ mean(.x[["TPM"]][.x[["transcript_id"]] == main_tx]))) |>
+  select(-data) 
 
-
-cat(".... mean TPM...")
-tx_tpm <- tx_main |>
-  mutate(tx_mean_TPM = map_dbl(data,
-                               ~ mean(.x[["TPM"]][.x[["transcript_id"]] == main_tx])))
-cat(" -- saving!\n")
-rm(tx_main)
-qs::qsave(tx_tpm,
-          paste0(interm_dir,"tx_tpm.qs"))
-
-cat(".... final factorization...")
-tx_sample <- tx_tpm |>
-  select(-data) |>
-  mutate(main_tx = factor(main_tx))
-cat(" -- saving!\n")
-rm(tx_tpm)
 qs::qsave(tx_sample,
           paste0(interm_dir,"tx_sample.qs"))
 
