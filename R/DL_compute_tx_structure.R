@@ -18,6 +18,16 @@ suppressPackageStartupMessages({
 library(wbData)
 tx2g_tab <- wb_load_tx2gene(281)
 
+
+gene_expression <- read.csv("data/thresholded_gene_expression/bsn9_subtracted_integrated_binarized_expression_withVDDD_FDR_0.1_092022.tsv",
+                            sep = "\t")
+gene_expression2 <- apply(gene_expression, 1, sum)
+genes_expressed_in_neurons <- names(gene_expression2)[gene_expression2 > 0]
+
+rm(gene_expression)
+rm(gene_expression2)
+
+
 #~ Make tables of transcript structure ----
 
 txdb <- wb_load_TxDb(281)
@@ -27,10 +37,6 @@ introns <- intronsByTranscript(txdb, use.names=TRUE)
 
 all.equal(names(introns), names(exons))
 
-subsample_tx <- sample(names(exons), 10)
-
-
-tx <- "W09C5.6a.1"
 
 get_tx_structure <- function(tx){
   rbind(exons[[tx]] |>
@@ -88,7 +94,7 @@ export_dir <- "data/intermediates_for_DL/220919_segments_coordinates/"
 
 
 segments_coords |>
-  # filter(gene_id %in% c("WBGene00014090", "WBGene00002827")) |>
+  filter(gene_id %in% genes_expressed_in_neurons) |>
   select(gene_id, transcript_id,
          segment_start = segment_start2,
          segment_end = segment_end2,
