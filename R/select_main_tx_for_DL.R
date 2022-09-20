@@ -39,14 +39,23 @@ majority_vote <- function(x, tie_breaker){
   
   majority_vote <- which(x == max(x))
   
+  if(length(majority_vote) == 0L){
+    stop("Failed to take majority vote.")
+  }
+  
   if(length(majority_vote) == 1L){
-    return(majority_vote)
+    final_vote <- majority_vote
   } else{
     final_vote <- which(x == max(x) &
                           tie_breaker == max(tie_breaker[majority_vote]))
-    if(length(final_vote) != 1L) stop("Failed to take majority vote.")
-    return(final_vote)
+    
+    if(length(final_vote) > 1L){
+      warning("Tie for majority vote, taking a random winner.")
+      final_vote <- sample(final_vote, 1)
+    }
   }
+  
+  final_vote
 }
 
 
