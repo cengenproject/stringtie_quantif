@@ -8,8 +8,8 @@
 #SBATCH --mail-user=alexis.weinreb@yale.edu
 
 
-echo "---------------  Running R script 'select_main_tx_for_DL.R' ---------------------"
+echo "---------------  Running R script 'DL_select_main_tx.R' ---------------------"
 
 module load R
-R --slave -f R/select_main_tx_for_DL.R
+R --slave -f R/DL_select_main_tx.R
 
