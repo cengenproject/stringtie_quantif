@@ -1,9 +1,6 @@
 # DRIMSeq preprocessing
-# Version "stc_dcq3_v4": using "stc_dcq3" data, 4th version of the scripts
-# Updated to use stc_dcq6 (more conservative transcript discovery)
+# Updated to use stc_q from 220322
 
-# First need to run STAR alignment + collapsedGTF + StringTie2 (bss1cst1_1 pipeline)
-# then need to run find_gene_for_tx4.R
 
 
 ## Initializations ----
@@ -18,42 +15,33 @@ suppressPackageStartupMessages({
 
 ## Prepare Data ----
 
-# From StringTie2 (stc_dcq5)
-path_data <- "data/intermediates/210824_str2_outs/summaries/"
+# From StringTie2 (stc_q)
+path_data <- "intermediates/220322_str_q_outs/summaries"
 
-# get tx <-> gene table from "find_gene_for_tx5.R": need to run separately
-transcripts_tbl <- readRDS("data/210824_transcript_WBGene_lut.rds")
-
-# Prepare samples table
-samples_table <- readr::read_csv("data/210820_full_sample_list.csv", col_types = "ccc") %>%
-  dplyr::select(-replicate) %>%
-  dplyr::rename(sample_id = sample)
+# transcripts table
+transcripts_tbl <- readr::read_tsv(file.path(path_data, "transcripts_table.tsv"),
+                                   col_types = "cddcccc")
 
 
-# Data from STAR alignment + collapsedGTF + StringTie2 (bsn5cst1_1 pipeline)
-# Read sample counts
+
+# sample counts
 cnts <- readr::read_csv(file.path(path_data, "transcript_count_matrix.csv"),
-                        col_types = paste0(c("c", rep("d", nrow(samples_table))),
-                                           collapse=""))
-
-
-# Check samples
-str_match(colnames(cnts), "^([A-Z0-9]{1,4}|Ref)r[0-9]{1,4}$") %>%
-  as_tibble(.name_repair = "universal") %>%
-  dplyr::slice(-1) %>%
-  dplyr::rename(sample_id = ...1,
-                neuron = ...2) %>%
-  arrange(sample_id) %>%
-  identical(samples_table) %>%
-  stopifnot()
+                        show_col_types = FALSE) |>
+  add_column(gene_id = transcripts_tbl$gene_id[match(cnts$transcript_id,
+                                                     transcripts_tbl$transcript_id)],
+             .after = "transcript_id") |>
+  dplyr::rename(feature_id = transcript_id)
 
 
 
+# samples table
+samples_table <- colnames(cnts) |>
+  setdiff(c("feature_id", "gene_id")) |>
+  enframe(value = "sample_id", name = NULL) |>
+  mutate(neuron_id = str_match(sample_id,
+                               pattern = "^([A-Z0-9]{1,4}|Ref)r[0-9]{1,4}$")[,2])
 
-# rename genes and transcripts
-cnts$gene_id <- transcripts_tbl$gene_id[match(cnts$transcript_id, transcripts_tbl$feature_id)]
-cnts <- dplyr::rename(cnts, feature_id = transcript_id)
-
+any(is.na(samples_table$neuron_id))
 
 
 
@@ -73,8 +61,8 @@ fdms <- dmFilter(dms,
                  min_samps_feature_expr = 3, min_feature_expr = 1,
                  min_samps_feature_prop = 3, min_feature_prop = 0.1,
                  min_samps_gene_expr = 7, min_gene_expr = 20)
-# after filtering,  8,791 /  28,697 genes left
-#                  49,723 / 113,661 transcripts left
+# after filtering,  7,237 / 46,925 genes left
+#                  21,581 / 64,758 transcripts left
 
 
 # Prepare contrasts
@@ -95,5 +83,5 @@ for(i in 1:length(factors_in_design)){
 pdms <- dmPrecision(fdms, design = design_no_int)
 fitdms <- dmFit(pdms, design = design_no_int, verbose = 1)
 
-saveRDS(fitdms, "data/2021-08-24_fitdms.rds")
+qs::qsave(fitdms, "intermediates/2023-03-30_drimseq_fitdms.rds")
 
