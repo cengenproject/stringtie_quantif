@@ -83,5 +83,5 @@ for(i in 1:length(factors_in_design)){
 pdms <- dmPrecision(fdms, design = design_no_int)
 fitdms <- dmFit(pdms, design = design_no_int, verbose = 1)
 
-qs::qsave(fitdms, "intermediates/2023-03-30_drimseq_fitdms.rds")
+qs::qsave(fitdms, "intermediates/2023-03-30_drimseq_fitdms.qs")
 
