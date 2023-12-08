@@ -15,7 +15,7 @@ set -e
 # version 1, withOUT novel isoform discovery and GTF combination
 # bsn5: bbduk, star, NuDup; then stc_dcq: stringtie on collapsed for novel, reference-based quantify
 # Important: combine only same neuron
-pipeline_version="str_q7"
+pipeline_version="str_q8"
 
 
 ######## Usage ######
@@ -55,42 +55,38 @@ echo
 # Create workspace paths
 ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
-WSversion="WS281"
+WSversion="WS288"
 
-#ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
-ref_gtf="intermediates/2022-03-22_str_sc_n/220322_novel_filt_sorted.gtf"
+ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
 
-# use the merged alignments in scratch60 (technical replicates are merged)
-alig_dir="/home/aw853/scratch60/2022-03-18_alignments"
 
-str2_out="intermediates/220322_str_q_outs"
+# bam files
+bam_dir="/gpfs/gibbs/pi/hammarlund/CeNGEN/bulk/bulk_alignments/bsn12_bams"
+
+out_dir="intermediates/231208_str_q_outs"
 
 
 ## Check inputs
 
-if [ ! -d $alig_dir ]
+if [ ! -d $bam_dir ]
 then
-echo "Error: bam directory does not exist: $alig_dir"
+echo "Error: bam directory does not exist: $bam_dir"
 exit 1
 fi
 
 
-if [ ! -d $str2_out ]
-then
-echo "Warning: destination directory does not exist. Creating it: $str2_out"
-mkdir -p $str2_out
-fi
+mkdir -p $out_dir
 
-mkdir -p $str2_out/quantifications
-mkdir -p $str2_out/summaries
+mkdir -p $out_dir/quantifications
+mkdir -p $out_dir/summaries
 
 
 echo "--------------------------------------------------------------"
 ## Read sample list and remove trailing extension
 
-echo "Reading samples from $alig_dir"
-mapfile -t sampleList < <(ls $alig_dir/*.bam | xargs basename -a -s .bam)
-mapfile -t neuronList < <(ls $alig_dir/*.bam | xargs basename -a -s .bam | cut -f1 -d"r")
+echo "Reading samples from $bam_dir"
+mapfile -t sampleList < <(ls $bam_dir/*.bam | xargs basename -a -s .bam)
+mapfile -t neuronList < <(ls $bam_dir/*.bam | xargs basename -a -s .bam | cut -f1 -d"r")
 
 if [ ${#sampleList[@]} -lt 1 ]
   then
@@ -108,7 +104,7 @@ fi
 # make lists of paths
 for((i=0; i<${#sampleList[@]}; i++))
 do
-  samplePath[i]=$alig_dir/${sampleList[i]}".bam"
+  samplePath[i]=$bam_dir/${sampleList[i]}".bam"
 done
 
 
