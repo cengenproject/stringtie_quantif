@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --partition=general
+#SBATCH --partition=day
 #SBATCH --job-name=str_q
 #SBATCH -c 18
-#SBATCH --mem=30G
-#SBATCH --time=5-00:10:00
+#SBATCH --mem=8G
+#SBATCH --time=20:10:00
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=alexis.weinreb@yale.edu
 
@@ -55,7 +55,7 @@ echo
 # Create workspace paths
 ref_dir="/gpfs/ycga/project/ysm/hammarlund/aw853/references"
 
-WSversion="WS288"
+WSversion="WS289"
 
 ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_geneset.gtf"
 
@@ -127,7 +127,7 @@ fi
 mapfile -t neurons < <(printf '%s\n' "${neuronList[@]}" | uniq)
 nb_neurons=${#neurons[@]}
 
-echo " Will treat ${#sampleList[@]]} samples from $nb_neurons neurons"
+echo " Will treat ${#sampleList[@]} samples from $nb_neurons neurons"
 
 
 
@@ -149,11 +149,11 @@ do
   echo "###################      Processing sample: $sample      ###################"
   echo
   
-  mkdir -p $str2_out/quantifications/$sample
+  mkdir -p $out_dir/quantifications/$sample
   stringtie2 -eB \
              -p $SLURM_CPUS_PER_TASK \
              -G $ref_gtf \
-             -o $str2_out/quantifications/$sample/$sample.gtf \
+             -o $out_dir/quantifications/$sample/$sample.gtf \
              ${samplePath[i]}
 done
 echo
@@ -164,13 +164,13 @@ echo
 module load R
 
 
-Rscript R/summarize_stringtie_q_output.R $str2_out/quantifications $str2_out/summaries
+Rscript R/summarize_stringtie_q_output.R $out_dir/quantifications $out_dir/summaries
 
 
 echo
-echo " > command: ~/.utilities/prepDE.py -i $str2_out"
-cd $str2_out/summaries
-~/.utilities/prepDE.py -i ../quantifications
+echo " > command: ~/.utilities/prepDE.py3 -i $out_dir"
+cd $out_dir/summaries
+~/.utilities/prepDE.py3 -i ../quantifications
 
 
 
