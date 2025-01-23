@@ -14,6 +14,9 @@ In particular, saves the TPMs also in a long format, as `.../t_exp.tsv`, for use
 
 Finally, calls `~/.utilities/prepDE.py3`, provided by Stringtie authors, to save `.../summaries/gene_count_matrix.csv` and `transcripts_count_matrix.csv` for other downstream uses (such as `R/drimseq_load_data` and `R/drimseq_test`). Note: 231208 had to change to the Python 3 version on McCleary.
 
+For other project, run StringTie with -A option (to create a `gene_abundance.tab` file for each sample), then use `summarize_gene_abundance.R` to gather the gene TPM from all samples and save as `gene_TPMs.tsv`.
+
+
 ## DRIMSeq
 
 No definitive approach at this point, see `R/drimseq_load_data` to load and pre-filter, saving the object `intermediates/2023-03-30_drimseq_fitdms.qs`, that can be loaded in `R/drimseq_test` to perform DTU.

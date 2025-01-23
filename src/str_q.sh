@@ -63,7 +63,7 @@ ref_gtf=$ref_dir/${WSversion}/"c_elegans.PRJNA13758."${WSversion}".canonical_gen
 # bam files
 bam_dir="/gpfs/gibbs/pi/hammarlund/CeNGEN/bulk/bulk_alignments/bsn12_bams"
 
-out_dir="intermediates/231208_str_q_outs"
+out_dir="intermediates/250122_str_q_outs"
 
 
 ## Check inputs
@@ -154,6 +154,7 @@ do
              -p $SLURM_CPUS_PER_TASK \
              -G $ref_gtf \
              -o $out_dir/quantifications/$sample/$sample.gtf \
+             -A $out_dir/quantifications/$sample/gene_abundance.tab \
              ${samplePath[i]}
 done
 echo
